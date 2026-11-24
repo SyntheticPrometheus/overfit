@@ -136,8 +136,81 @@ footer button {
 #banner.win h1 { color: var(--you); }
 #banner.lose h1 { color: var(--house); }
 
+/* tablet / small laptop: stack, let the page scroll, keep the footer in flow */
 @media (max-width: 900px) {
+  html, body { height: auto; min-height: 100%; overflow-x: hidden; overflow-y: auto; }
   main { grid-template-columns: 1fr; height: auto; }
+  .panel { min-height: auto; }
+  canvas#chart { flex: none; height: 300px; }
+  canvas#mine, canvas#truth { max-width: 200px; margin: 0 auto; }
   .shop { grid-template-columns: 1fr; }
-  body { overflow: auto; }
+  footer { position: static; margin-top: 14px; }
+}
+
+/* phone: chart first, shop under it, previews below, thumb-sized targets.
+   main stops being a box (display:contents) so its three panels can be ordered
+   against the shop and footer in one grid. */
+@media (max-width: 860px) {
+  html, body { height: auto; min-height: 100%; overflow-x: hidden; overflow-y: auto; }
+  body {
+    display: grid; grid-template-columns: 1fr 1fr; align-content: start;
+    font-size: 14px; min-height: 100dvh;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    -webkit-text-size-adjust: 100%;
+  }
+  header, footer, .race, .shop { grid-column: 1 / -1; }
+  header { padding: 10px 14px 8px; }
+  .brand { font-size: 16px; letter-spacing: 4px; }
+  .rec small, .mid .lbl { font-size: 9px; }
+  main { display: contents; }
+  .panel { margin: 10px 14px 0; padding: 10px 12px; min-height: auto; }
+
+  .race { order: 1; }
+  .shop { order: 2; margin: 10px 14px 0; }
+  .model { order: 3; grid-column: 1; }
+  .workload { order: 4; grid-column: 2; }
+  footer { order: 5; }
+
+  .race .num { grid-template-columns: 1fr 1fr; gap: 6px 10px; }
+  .race .big { font-size: 22px; }
+  canvas#chart { flex: none; height: 240px; min-height: 240px; }
+  canvas#mine, canvas#truth { max-width: 128px; margin: 0 auto; }
+
+  .flops { flex-direction: row; align-items: baseline; justify-content: space-between; padding: 8px 12px; }
+  .flops b { font-size: 18px; }
+  #upgrades { grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 6px; }
+  button.buy { min-height: 48px; padding: 7px 8px; }
+  button.buy .n { font-size: 12px; }
+  button.buy .n span { white-space: nowrap; }
+  button.buy .e { font-size: 10px; }
+  /* the sub-label is the first thing to lose width on a phone; the effect is the useful one */
+  button.buy .e:not(.eff) { display: none; }
+  button.buy .eff { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lr { gap: 8px; }
+  .lr input { height: 32px; }
+  .hint { font-size: 11px; }
+
+  footer {
+    position: static; margin-top: 12px; padding: 10px 14px 14px;
+    flex-wrap: wrap; font-size: 12px;
+  }
+  footer button { min-height: 44px; padding: 10px 16px; }
+
+  #banner .card { width: calc(100vw - 28px); max-width: 440px; padding: 20px 18px; }
+  #banner h1 { font-size: 17px; }
+  #banner p { font-size: 13px; }
+}
+
+@media (max-width: 400px) {
+  .brand { font-size: 14px; letter-spacing: 2px; }
+  .lbl { letter-spacing: 1px; }
+  .race .big { font-size: 20px; }
+  canvas#chart { height: 210px; min-height: 210px; }
+}
+
+/* touch: no 300ms tap delay, no sticky hover states, no accidental text select */
+button, input, canvas, #banner { touch-action: manipulation; }
+button, .brand, .cap, .big { -webkit-tap-highlight-color: transparent; }
+@media (hover: none) {
+  button.buy:hover:not(:disabled) { border-color: var(--line); background: #121a24; }
 }

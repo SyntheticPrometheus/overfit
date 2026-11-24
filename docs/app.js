@@ -49,6 +49,8 @@ async function boot() {
   buildShop();
   $("lr").addEventListener("input", onLr);
   $("next").addEventListener("click", nextRound);
+  // On a phone the next button is below the fold; the result card itself is the tap target.
+  $("banner").addEventListener("click", () => { if (!$("next").hidden) nextRound(); });
   window.addEventListener("keydown", (e) => {
     if (e.code === "Space" || e.code === "Enter") { e.preventDefault(); nextRound(); }
   });
