@@ -2,7 +2,7 @@
 // Every number that decides pacing lives in this file so a bot can measure it.
 
 export const PRESTIGE_AT = 10000;   // total sap that makes the first Harvest possible
-export const LADDER = 1.25;        // every Harvest makes the next rung 25% deeper
+export const LADDER = 2.5;        // every Harvest makes the next rung 2.5x deeper
 // The rung is not a constant: it climbs with each Harvest, so the loop is a
 // ladder you keep climbing rather than a flat +40 every 20 seconds. The bot in
 // sim.mjs measures the climb; the seed haul is sqrt(depth past the rung), so a
@@ -145,11 +145,12 @@ export function seedGain(s) {
   if (!canHarvest(s)) return 0;
   const need = prestigeAt(s);
   // Pay for depth past the rung, not for the rung itself: sqrt keeps the haul
-  // sub-linear, so pushing deeper is worth more but never runs away.
+  // sub-linear, so pushing deeper is worth more but never runs away. The seed
+  // upgrades multiply *rate* (linear in rung count), never the haul itself --
+  // a multiplicative haul is the feedback loop that inflates the economy.
   let g = 2 * Math.sqrt(s.totalSap / need);
-  let bonus = seedGainMul(s);
-  if (owned(s, 'fruit')) bonus *= 1.5;
-  return Math.floor(g * bonus);
+  if (owned(s, 'fruit')) g *= 1.5;
+  return Math.min(40, Math.floor(g));
 }
 
 export function harvest(s) {

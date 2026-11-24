@@ -13,9 +13,13 @@ climb, not a flat +40 every 20 seconds.
     node sim.mjs --check  # exits 1 if the pacing claims fail
 
 Measured with the bot (`node sim.mjs`): first purchase 1.3 s, first Harvest
-52 s, 17 Harvests in 10 min, no stall over 19 s in the first five minutes. The
-rounds climb from 16 s to 55 s across the ten minutes and the rung the next
-Harvest needs climbs 10x+ — the tension the first version lacked.
+52 s, 21 Harvests in 10 min, no stall over 16 s in the first five minutes. The
+rounds climb from 16 s to 71 s across the ten minutes (52 s, 68 s, 81 s ... 506 s,
+577 s) and the rung the next Harvest needs climbs 10x+ — the tension the first
+version lacked. Over 30 min the rounds keep lengthening (to ~70 s) and the haul
+per Harvest tightens from +40 toward +3, so the ladder never becomes a flat
++40 every 20 seconds. The bot also runs the worst strategy (Harvest the instant
+it is possible) for 30 min without a dead end, so the game cannot be lost.
 
 Genre lineage: The Prestige Tree (Jacorb90) and The Modding Tree
 (github.com/Acamaeda/The-Modding-Tree, MIT), which made this shape of game
