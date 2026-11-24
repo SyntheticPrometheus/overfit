@@ -1,9 +1,13 @@
 // GROVE — pure game logic. No DOM. Imported by the page and by sim.mjs.
 // Every number that decides pacing lives in this file so a bot can measure it.
 
-export const PRESTIGE_AT = 10000;   // total sap that makes a Harvest possible
-// seeds = sqrt(totalSap / PRESTIGE_AT): each 4x deeper run doubles the seed haul,
-// so the loop converges instead of inflating (the bot in sim.mjs measures this).
+export const PRESTIGE_AT = 10000;   // total sap that makes the first Harvest possible
+export const LADDER = 1.25;        // every Harvest makes the next rung 25% deeper
+// The rung is not a constant: it climbs with each Harvest, so the loop is a
+// ladder you keep climbing rather than a flat +40 every 20 seconds. The bot in
+// sim.mjs measures the climb; the seed haul is sqrt(depth past the rung), so a
+// patient push pays more without letting one harvest explode the economy.
+export function prestigeAt(s) { return PRESTIGE_AT * Math.pow(LADDER, s.harvests); }
 
 // A node is a spot on the tree. `fx.mul` multiplies sap/s, `fx.flat` adds,
 // `unlock` names a mechanic, `repeat` makes it a buyable (count scaling).
@@ -38,19 +42,37 @@ export const NODES = [
   { id: 'ring',    name: 'Ring',         cost: 1e11, growth: 2.2, max: 30, repeat: true, parents: ['sky'], x: 88, y: 4, desc: '×2 sap/s each, max 30', fx: { mul: 2 } },
 ];
 
-// Permanent upgrades bought with seeds. Survive Harvest.
+// Permanent upgrades bought with seeds. Survive Harvest. Each is a rung you
+// can buy again: the next rung costs more and gives more, so the ladder never
+// ends and the next rung is always a real climb. Cost grows ~2.4x per rung
+// while the effect grows linearly, so the ladder tightens as you climb.
 export const SEED_UPGRADES = [
-  { id: 'germ',  name: 'Germinate',    cost: 3,    desc: 'Every run starts at ×4 sap/s', fx: { start: 4 } },
-  { id: 'bark',  name: 'Thin Bark',    cost: 8,    desc: 'Node costs −15%', fx: { discount: 0.85 } },
-  { id: 'rot',   name: 'Sweet Rot',    cost: 16,   desc: 'Harvests give +100% seeds', fx: { seeds: 2 } },
-  { id: 'tap',   name: 'Rainmaker',    cost: 30,   desc: 'Rain taps ×4 stronger', fx: { click: 4 } },
-  { id: 'store', name: 'Seed Bank',    cost: 55,  desc: '×3 sap/s, permanently', fx: { mul: 3 } },
-  { id: 'deep',  name: 'Deep Memory',  cost: 90,  desc: 'Offline growth at full rate', fx: { offline: 1 } },
-  { id: 'dry',   name: 'Dry Season',   cost: 140,  desc: 'Harvest keeps a quarter of the tree', fx: { keep: 0.25 } },
-  { id: 'eld',   name: 'Elder Grove',  cost: 220, desc: '×5 sap/s, permanently', fx: { mul: 5 } },
-  { id: 'myc',   name: 'Mycorrhiza',   cost: 320, desc: 'Harvests give +100% seeds', fx: { seeds: 2 } },
-  { id: 'world', name: 'World Tree',   cost: 450, desc: '×10 sap/s, permanently', fx: { mul: 10 } },
+  { id: 'germ',  name: 'Germinate',    cost: 3,   growth: 2.4, desc: 'Every run starts faster', fx: { start: 3 } },
+  { id: 'bark',  name: 'Thin Bark',    cost: 8,   growth: 2.4, desc: 'Node costs −15% per rung', fx: { discount: 0.15 } },
+  { id: 'rot',   name: 'Sweet Rot',    cost: 16,  growth: 2.4, desc: 'Harvests give +1× seeds per rung', fx: { seeds: 1 } },
+  { id: 'tap',   name: 'Rainmaker',    cost: 30,  growth: 2.4, desc: 'Rain taps ×3 stronger per rung', fx: { click: 3 } },
+  { id: 'store', name: 'Seed Bank',    cost: 55,  growth: 2.4, desc: '×2 sap/s per rung', fx: { mul: 2 } },
+  { id: 'deep',  name: 'Deep Memory',  cost: 90,  growth: 2.4, max: 1, desc: 'Offline growth at full rate', fx: { offline: 1 } },
+  { id: 'dry',   name: 'Dry Season',   cost: 140, growth: 2.4, desc: 'Harvest keeps +10% of the tree per rung', fx: { keep: 0.1 } },
+  { id: 'eld',   name: 'Elder Grove',  cost: 220, growth: 2.4, desc: '×4 sap/s per rung', fx: { mul: 4 } },
+  { id: 'myc',   name: 'Mycorrhiza',   cost: 320, growth: 2.4, desc: 'Harvests give +1× seeds per rung', fx: { seeds: 1 } },
+  { id: 'world', name: 'World Tree',   cost: 450, growth: 2.4, desc: '×9 sap/s per rung', fx: { mul: 9 } },
 ];
+
+// The seed tree's effects, each a linear function of its rung count. Cost is
+// exponential (see seedUpgradeCost), so the ladder tightens as you climb.
+export const rung = (s, id) => s.seedUp[id] || 0;
+export function seedUpgradeCost(s, u) { return u.cost * Math.pow(u.growth || 2.4, rung(s, u.id)); }
+export function seedRateMul(s) {
+  return (1 + 3 * rung(s, 'germ')) * (1 + 2 * rung(s, 'store'))
+       * (1 + 4 * rung(s, 'eld')) * (1 + 9 * rung(s, 'world'));
+}
+export function seedGainMul(s) {
+  return (1 + 1 * rung(s, 'rot')) * (1 + 1 * rung(s, 'myc'));
+}
+export function seedDiscount(s) { return Math.max(0.5, 1 - 0.15 * rung(s, 'bark')); }
+export function seedKeep(s) { return Math.min(0.75, 0.15 + 0.1 * rung(s, 'dry')); }
+export function seedClick(s) { return 1 + 3 * rung(s, 'tap'); }
 
 const BY_ID = new Map(NODES.map(n => [n.id, n]));
 export const node = id => BY_ID.get(id);
@@ -71,7 +93,7 @@ export function has(s, mech) { return !!s.unlocks[mech]; }
 
 export function costOf(s, n) {
   const c = n.cost * Math.pow(n.growth || 1, s.counts[n.id] || 0);
-  return s.seedUp.bark ? c * 0.85 : c;
+  return c * seedDiscount(s);
 }
 
 export function available(s, n) {
@@ -82,10 +104,8 @@ export function available(s, n) {
 
 // sap/s
 export function rate(s) {
-  let mul = 1;
+  let mul = seedRateMul(s);
   let flat = 0;
-  for (const u of SEED_UPGRADES) if (s.seedUp[u.id] && u.fx.mul) mul *= u.fx.mul;
-  if (s.seedUp.germ) mul *= 4;
   // Held seeds help a little; the seed tree is where the power is, so a bot
   // that harvests constantly cannot inflate the rate (measured in sim.mjs).
   mul *= 1 + 0.6 * Math.log10(1 + s.seeds);
@@ -102,7 +122,7 @@ export function rate(s) {
 export function tapValue(s) {
   let c = 1;
   for (const n of NODES) if (owned(s, n.id) && n.fx.click) c *= n.fx.click;
-  if (s.seedUp.tap) c *= 4;
+  c *= seedClick(s);
   return rate(s) * c;
 }
 
@@ -119,15 +139,17 @@ export function buy(s, id) {
   return true;
 }
 
-export function canHarvest(s) { return has(s, 'harvest') && s.totalSap >= PRESTIGE_AT; }
+export function canHarvest(s) { return has(s, 'harvest') && s.totalSap >= prestigeAt(s); }
 
 export function seedGain(s) {
   if (!canHarvest(s)) return 0;
-  let g = Math.sqrt(s.totalSap / 8000);
-  let bonus = 1;
+  const need = prestigeAt(s);
+  // Pay for depth past the rung, not for the rung itself: sqrt keeps the haul
+  // sub-linear, so pushing deeper is worth more but never runs away.
+  let g = 2 * Math.sqrt(s.totalSap / need);
+  let bonus = seedGainMul(s);
   if (owned(s, 'fruit')) bonus *= 1.5;
-  for (const u of SEED_UPGRADES) if (s.seedUp[u.id] && u.fx.seeds) bonus *= u.fx.seeds;
-  return Math.min(40, Math.floor(g * bonus));   // a single harvest cannot print seeds
+  return Math.floor(g * bonus);
 }
 
 export function harvest(s) {
@@ -135,13 +157,14 @@ export function harvest(s) {
   if (!g) return 0;
   const kept = { seeds: s.seeds + g, seedUp: s.seedUp, harvests: s.harvests + 1 };
   const keptNodes = {};
-  if (s.seedUp.dry) for (const [id, k] of Object.entries(s.counts)) keptNodes[id] = k;
+  if (rung(s, 'dry')) for (const [id, k] of Object.entries(s.counts)) keptNodes[id] = k;
   const fresh = newGame();
   Object.assign(s, fresh, kept);
-  if (s.seedUp.dry) {
-    // Dry Season keeps a quarter of each count, rounded down (at least 1 owned).
+  if (rung(s, 'dry')) {
+    // Dry Season keeps a share of each count, rounded down (at least 1 owned).
+    const frac = seedKeep(s);
     for (const [id, k] of Object.entries(keptNodes)) {
-      const keep = k > 1 ? Math.floor(k * 0.25) : 1;
+      const keep = k > 1 ? Math.max(1, Math.floor(k * frac)) : 1;
       if (keep > 0) s.counts[id] = keep;
     }
     for (const n of NODES) if (n.fx.unlock && s.counts[n.id]) s.unlocks[n.fx.unlock] = true;
@@ -151,9 +174,11 @@ export function harvest(s) {
 
 export function buySeedUpgrade(s, id) {
   const u = SEED_UPGRADES.find(x => x.id === id);
-  if (!u || s.seedUp[id] || s.seeds < u.cost) return false;
-  s.seeds -= u.cost;
-  s.seedUp[id] = true;
+  if (!u || (u.max && rung(s, id) >= u.max)) return false;
+  const c = seedUpgradeCost(s, u);
+  if (s.seeds < c) return false;
+  s.seeds -= c;
+  s.seedUp[id] = rung(s, id) + 1;
   return true;
 }
 

@@ -1,6 +1,6 @@
 import { NODES, SEED_UPGRADES, newGame, rate, fmt, costOf, available, owned, buy,
          tap, tapValue, tick, canHarvest, seedGain, harvest, buySeedUpgrade, has,
-         PRESTIGE_AT } from './game.js';
+         prestigeAt, rung, seedUpgradeCost } from './game.js';
 
 const $ = id => document.getElementById(id);
 const SAVE = 'grove.v1';
@@ -19,7 +19,7 @@ function load() {
     // Offline growth: only with the Crown node, at half rate, capped at 8h.
     const away = Math.min(8 * 3600, Math.max(0, (Date.now() - (raw.at || Date.now())) / 1000));
     if (has(g, 'offline') && away > 60) {
-      const mul = g.seedUp.deep ? 1 : 0.5;
+      const mul = rung(g, 'deep') ? 1 : 0.5;
       const gain = rate(g) * away * mul;
       g.sap += gain; g.totalSap += gain;
       setTimeout(() => hint(`while you were away: +${fmt(gain)} sap (${Math.round(away / 60)} min)`), 400);
@@ -95,7 +95,7 @@ function draw() {
   const g = seedGain(s);
   hb.hidden = !has(s, 'harvest');
   if (has(s, 'harvest')) {
-    hb.textContent = g ? `Harvest +${g}` : `Harvest at ${fmt(PRESTIGE_AT)} sap`;
+    hb.textContent = g ? `Harvest +${g}` : `Harvest at ${fmt(prestigeAt(s))} sap`;
     hb.disabled = !g;
   }
 
@@ -122,14 +122,16 @@ function draw() {
     const list = $('seedlist');
     list.innerHTML = '';
     for (const u of SEED_UPGRADES) {
-      const done = !!s.seedUp[u.id];
+      const L = rung(s, u.id);
+      const maxed = u.max && L >= u.max;
+      const c = seedUpgradeCost(s, u);
       const row = document.createElement('div');
-      row.className = 'up' + (done ? ' done' : '');
-      row.innerHTML = `<b>${done ? '✓' : u.cost}</b><span>${u.name} — ${u.desc}</span>`;
-      if (!done) {
+      row.className = 'up' + (maxed ? ' done' : '');
+      row.innerHTML = `<b>${maxed ? '✓' : fmt(c)}</b><span>${u.name}${L ? ` ×${L}` : ''} — ${u.desc}</span>`;
+      if (!maxed) {
         const b = document.createElement('button');
         b.textContent = 'buy';
-        b.disabled = s.seeds < u.cost;
+        b.disabled = s.seeds < c;
         b.onclick = () => { if (buySeedUpgrade(s, u.id)) { hint(`${u.name} — ${u.desc}`); save(); draw(); } };
         row.appendChild(b);
       }

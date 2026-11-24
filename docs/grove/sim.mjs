@@ -3,7 +3,7 @@
 // exits 1 when a claim fails.
 import { newGame, NODES, node, costOf, available, owned, rate, tick, buy,
          canHarvest, harvest, seedGain, has, buySeedUpgrade, tap, SEED_UPGRADES,
-         PRESTIGE_AT, fmt } from './game.js';
+         PRESTIGE_AT, prestigeAt, rung, seedUpgradeCost, fmt } from './game.js';
 
 const CHECK = process.argv.includes('--check');
 const SECONDS = Number(process.env.SIM_SECONDS || 600);
@@ -24,7 +24,7 @@ function play(seconds, trace = false) {
     maxIdle = Math.max(maxIdle, idle);
     if (t < 300) maxIdleEarly = Math.max(maxIdleEarly, idle);
 
-    for (const u of SEED_UPGRADES) if (!s.seedUp[u.id] && s.seeds >= u.cost) buySeedUpgrade(s, u.id);
+    for (const u of SEED_UPGRADES) if (s.seeds >= seedUpgradeCost(s, u)) buySeedUpgrade(s, u.id);
 
     if (canBuy) {
       // prefer unlocks, then the biggest multiplier, else cheapest
@@ -46,9 +46,9 @@ function play(seconds, trace = false) {
       const stalled = t - lastBuy > 60 && t - (harvests.at(-1)?.t ?? -99) > 20;
       // A patient player: harvests for a real jump, or when the run has stalled.
       if (g >= Math.max(5, Math.ceil(s.seeds * 0.6)) || (stalled && g >= 2)) {
+        harvests.push({ t, g, rung: prestigeAt(s), seeds: s.seeds, rungs: SEED_UPGRADES.reduce((a, u) => a + rung(s, u.id), 0) });
         harvest(s);
         if (firstHarvest === null) firstHarvest = t;
-        harvests.push({ t, g });
       }
     }
   }
@@ -61,14 +61,21 @@ console.log(`first purchase: ${r.firstBuy === null ? 'never' : r.firstBuy.toFixe
 console.log(`first harvest:  ${r.firstHarvest === null ? 'never' : r.firstHarvest.toFixed(1) + 's'}`);
 console.log(`harvests:       ${r.harvests.map(h => `${h.t.toFixed(0)}s(+${h.g})`).join(' ') || 'none'}`);
 console.log(`longest idle:   ${r.maxIdle.toFixed(1)}s total, ${r.maxIdleEarly.toFixed(1)}s in the first 5min (no affordable node, tapping Rain)`);
-console.log(`seed upgrades:  ${Object.keys(r.s.seedUp).join(',') || 'none'}`);
+console.log(`seed rungs:     ${SEED_UPGRADES.map(u => `${u.id}×${rung(r.s, u.id)}`).join(' ') || 'none'}`);
 if (process.argv.includes('--trace')) for (const m of r.marks) console.log(`  ${m.t.toFixed(1)}s ${m.what}`);
 
+// Tension claims: the ladder must climb and later rounds must cost more.
+const firstRung = r.harvests[0]?.rung ?? 0;
+const lastRung = r.harvests.at(-1)?.rung ?? 0;
+const firstRound = r.harvests[1] ? r.harvests[1].t - r.harvests[0].t : 0;
+const lastRound = r.harvests.length > 1 ? r.harvests.at(-1).t - r.harvests.at(-2).t : 0;
 const claims = [
   ['first purchase under 10s', r.firstBuy !== null && r.firstBuy < 10],
   ['Harvest unlocked and taken under 5min', r.firstHarvest !== null && r.firstHarvest < 300],
   ['at least 2 harvests in 10min', r.harvests.length >= 2],
   ['no dead stretch over 90s before 5min', r.maxIdleEarly < 90],
+  ['the rung climbs (last >= 10x first)', lastRung >= firstRung * 10],
+  ['later rounds are not trivial (last round >= 2x first)', lastRound >= firstRound * 2],
 ];
 let bad = 0;
 for (const [name, ok] of claims) { console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}`); if (!ok) bad++; }
