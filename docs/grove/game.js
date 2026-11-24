@@ -7,13 +7,21 @@ export const LADDER = 2.5;        // every Harvest makes the next rung 2.5x deep
 // ladder you keep climbing rather than a flat +40 every 20 seconds. The bot in
 // sim.mjs measures the climb; the seed haul is sqrt(depth past the rung), so a
 // patient push pays more without letting one harvest explode the economy.
-// The rung the next Harvest needs. It climbs with every Harvest, but not for
-// ever: past LADDER_CAP the ladder stops outrunning the tree. Uncapped, the
-// 122nd Harvest needed 10^52 sap while the tree's ceiling is ~10^39 -- a
-// permanent dead end, which the fun instrument measured as 960 s of nothing to
-// do (design/PLAN.md D2) and which is why the late game had no decision left.
+// The rung the next Harvest needs: the deeper of (a) the exponential ladder and
+// (b) `RUNG_SECONDS` seconds of what the tree earns *now*. (a) is the ladder you
+// climb; (b) is the floor that stops the ladder being outrun.
+// Without (b) the fixed ladder goes stale: `LADDER_CAP` pinned the 23rd rung at
+// 1e13 while the tree reached 1e46 sap/s, so every later Harvest was one keypress
+// -- the instrument counted 3911 harvests in 20 simulated minutes and the best
+// policy was "wait for the 40 cap" (design/PLAN.md D3, fun 0.043). Scaling the
+// rung to the player's own income makes every Harvest a ~15 s push at *any*
+// depth: a decision that repeats, not a rule that runs out.
 export const LADDER_CAP = 1e9;
-export function prestigeAt(s) { return PRESTIGE_AT * Math.min(Math.pow(LADDER, s.harvests), LADDER_CAP); }
+export const RUNG_SECONDS = 15;
+export function prestigeAt(s) {
+  const byHand = PRESTIGE_AT * Math.min(Math.pow(LADDER, s.harvests), LADDER_CAP);
+  return Math.max(byHand, RUNG_SECONDS * rate(s));
+}
 
 // A node is a spot on the tree. `fx.mul` multiplies sap/s, `fx.flat` adds,
 // `unlock` names a mechanic, `repeat` makes it a buyable (count scaling).
@@ -71,7 +79,10 @@ export const SEED_UPGRADES = [
 // The seed tree's effects, each a linear function of its rung count. Cost is
 // exponential (see seedUpgradeCost), so the ladder tightens as you climb.
 export const rung = (s, id) => s.seedUp[id] || 0;
-export function seedUpgradeCost(s, u) { return u.cost * Math.pow(u.growth || 2.4, rung(s, u.id)); }
+// Ceil: 3 x 2.4 = 7.1999..., and a fractional price leaves the seed counter
+// showing 6.80 seeds (measured by design/playtest.mjs on 2026-11-24). Seeds are
+// counted, so their price is a whole seed.
+export function seedUpgradeCost(s, u) { return Math.ceil(u.cost * Math.pow(u.growth || 2.4, rung(s, u.id))); }
 export function seedRateMul(s) {
   return (1 + 3 * rung(s, 'germ')) * (1 + 2 * rung(s, 'store'))
        * (1 + 4 * rung(s, 'eld')) * (1 + 9 * rung(s, 'world'));

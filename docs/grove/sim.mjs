@@ -75,6 +75,10 @@ const claims = [
   ['at least 2 harvests in 10min', r.harvests.length >= 2],
   ['no dead stretch over 90s before 5min', r.maxIdleEarly < 90],
   ['the rung climbs (last >= 10x first)', lastRung >= firstRung * 10],
+  // Guard for the class that cost the game its late game: a fixed ladder goes
+  // stale once income outruns it and every Harvest becomes one keypress. The
+  // rung must stay tied to what the tree earns now, however far the numbers ran.
+  ['the rung is still a real push (>= 10s of income)', prestigeAt(r.s) >= 10 * rate(r.s)],
   ['later rounds are not trivial (last round >= 2x first)', lastRound >= firstRound * 2],
 ];
 let bad = 0;

@@ -69,7 +69,13 @@ console.log(`idle: ${best.maxIdle.toFixed(0)}s longest stretch with nothing to b
 const idleFactor = 1 / (1 + best.maxIdle / 90);
 const fun = Math.log1p(decisionValue) * (1 - falseChoice) * idleFactor;
 console.log(`\nFUN SCORE ${fun.toFixed(3)}   = log(1+decision_value) x (1-false_choice) x 1/(1+idle/90)`);
-console.log(`claim: FUN must beat the previous day's, and the best policy must stay INTERIOR.`);
+// Guard: a policy that Harvests dozens of times a minute is not making choices,
+// it is holding a key down. The instrument therefore refuses a run whose best
+// policy is spam -- that is what a stale, fixed ladder produces (2026-11-24).
+const spam = best.harvests > 60;
+console.log(`claim: FUN must beat the previous day's, the best policy must stay INTERIOR,` +
+  ` and it must not be Harvest spam (${best.harvests} harvests in ${SECONDS}s` +
+  `${spam ? ' -- SPAM' : ''}).`);
 // The ratchet. The first run records the baseline; every later run must not
 // make the game worse than the day before. The interior-rule flag is a *goal*
 // that is reported every day, not a gate -- the point of the daily loop is to
@@ -88,6 +94,7 @@ if (process.argv.includes('--check')) {
     process.exit(0);
   }
   const worse = [];
+  if (spam) worse.push(`best policy is Harvest spam (${best.harvests} harvests in ${SECONDS}s > 60)`);
   if (state.fun < base.fun - 1e-6) worse.push(`fun ${state.fun} < baseline ${base.fun}`);
   if (state.decisionValue < base.decisionValue - 1e-6) worse.push(`decision_value ${state.decisionValue} < ${base.decisionValue}`);
   if (state.idleSeconds > base.idleSeconds) worse.push(`idle ${state.idleSeconds}s > ${base.idleSeconds}s`);

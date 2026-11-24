@@ -1,9 +1,9 @@
 {
-  "fun": 0.0433,
-  "decisionValue": 0.1453,
-  "falseChoice": 0.375,
+  "fun": 0.3661,
+  "decisionValue": 1.1324,
+  "falseChoice": 0.06,
   "interior": true,
-  "idleSeconds": 86,
-  "idleFactor": 0.511,
-  "bestHold": 34
+  "idleSeconds": 85,
+  "idleFactor": 0.514,
+  "bestHold": 15
 }
