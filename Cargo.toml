@@ -1,0 +1,19 @@
+[package]
+name = "overfit"
+version = "0.1.0"
+edition = "2021"
+description = "Overfit - an incremental training-race game with a real neural net, in Rust to WebAssembly"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "sim"
+path = "src/sim.rs"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"

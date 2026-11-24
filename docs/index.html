@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OVERFIT — a benchmark race</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="brand">OVER<span>T</span>FIT</div>
+  <div class="mid">
+    <div class="lbl">benchmark run</div>
+    <div class="run"><b id="run">1</b> / 16</div>
+  </div>
+  <div class="rec">
+    <div class="lbl">record</div>
+    <div><b id="wins">0</b> : <b id="losses">0</b></div>
+  </div>
+</header>
+
+<main>
+  <section class="panel model">
+    <div class="cap">your model</div>
+    <canvas id="mine" width="16" height="16"></canvas>
+    <div class="arch" id="arch">2 → 8 → 3</div>
+    <div class="sub" id="params">0 params</div>
+    <div class="sub" id="archline">1 hidden layer · 8 wide</div>
+  </section>
+
+  <section class="panel race">
+    <div class="num">
+      <div>
+        <div class="cap">your loss</div>
+        <div class="big you" id="loss">1.0000</div>
+      </div>
+      <div>
+        <div class="cap">the incumbent</div>
+        <div class="big house" id="house">1.0000</div>
+      </div>
+      <div>
+        <div class="cap">its claim</div>
+        <div class="big dim" id="floor">0.0570</div>
+      </div>
+      <div>
+        <div class="cap">margin</div>
+        <div class="big" id="margin">—</div>
+      </div>
+    </div>
+    <canvas id="chart" width="720" height="300"></canvas>
+    <div class="bar"><i id="prog"></i></div>
+    <div class="sub center" id="steps">step 0 / 420</div>
+  </section>
+
+  <section class="panel workload">
+    <div class="cap">the workload</div>
+    <canvas id="truth" width="16" height="16"></canvas>
+    <div class="sub" id="workload">run 1</div>
+    <div class="sub small">measurement noise: 5%</div>
+  </section>
+</main>
+
+<section class="shop">
+  <div class="flops"><span class="lbl">FLOPs</span> <b id="flops">0</b></div>
+  <div id="upgrades"></div>
+  <div class="lr">
+    <div class="lbl">learning rate <b id="lrval">0.020</b></div>
+    <input id="lr" type="range" min="0" max="1000" value="577">
+    <div class="hint" id="lrhint">watch the curve: too low crawls, too high diverges</div>
+  </div>
+</section>
+
+<footer>
+  <span id="msg">a new workload. train your model under the incumbent's loss.</span>
+  <button id="next" hidden>next run →</button>
+</footer>
+
+<div id="banner" hidden><div class="card"><h1 id="bh"></h1><p id="bp"></p></div></div>
+
+<script src="app.js"></script>
+</body>
+</html>
