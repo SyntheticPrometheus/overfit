@@ -7,7 +7,7 @@
 //
 //   node design/fun.mjs            # 20 simulated minutes per policy
 //   SECONDS=3600 node design/fun.mjs
-import { newGame, NODES, available, costOf, buy, buySeedUpgrade, tick, tap,
+import { newGame, NODES, available, costOf, buy, buySeedUpgrade, tick, tap, rung,
          harvest, seedGain, canHarvest, seedUpgradeCost, SEED_UPGRADES,
          prestigeAt, rate } from '../docs/grove/game.js';
 
@@ -22,7 +22,11 @@ function play(hold) {
   let seeds = 0, harvests = 0, idle = 0, maxIdle = 0, firstH = null;
   for (let t = 0; t < SECONDS; t += DT) {
     tick(s, DT);
-    const canBuy = NODES.some(n => available(s, n) && costOf(s, n) <= s.sap);
+    // "Nothing to do" means no node AND no seed upgrade: the seed shop is the
+    // late game's real content, so a node-only test reported the endgame as dead
+    // air when the player was in fact still choosing what to buy.
+    const canBuy = NODES.some(n => available(s, n) && costOf(s, n) <= s.sap)
+      || SEED_UPGRADES.some(u => (!u.max || rung(s, u.id) < u.max) && s.seeds >= seedUpgradeCost(s, u));
     if (!canBuy) { tap(s); idle += DT; } else idle = 0;
     maxIdle = Math.max(maxIdle, idle);
     for (const u of SEED_UPGRADES) if (s.seeds >= seedUpgradeCost(s, u)) buySeedUpgrade(s, u.id);
@@ -60,8 +64,11 @@ console.log(`\nbest policy: hold ${best.hold} (${best.seeds} seeds, ${best.harve
 console.log(`median policy: ${median.seeds} seeds -> decision_value ${(decisionValue * 100).toFixed(1)}%`);
 console.log(`false_choice: ${(falseChoice * 100).toFixed(0)}% of policies within 5% of the best (lower is better)`);
 console.log(`idle: ${best.maxIdle.toFixed(0)}s longest stretch with nothing to buy`);
-const fun = Math.log1p(decisionValue) * (1 - falseChoice) * Math.log10(1 + best.maxIdle + 10) / 2;
-console.log(`\nFUN SCORE ${fun.toFixed(3)}   = log(1+decision_value) x (1-false_choice) x idle-term/2`);
+// Dead air is a penalty, not a bonus. The first version of this formula had the
+// sign of this term backwards and scored 967s of nothing to do as *good*.
+const idleFactor = 1 / (1 + best.maxIdle / 90);
+const fun = Math.log1p(decisionValue) * (1 - falseChoice) * idleFactor;
+console.log(`\nFUN SCORE ${fun.toFixed(3)}   = log(1+decision_value) x (1-false_choice) x 1/(1+idle/90)`);
 console.log(`claim: FUN must beat the previous day's, and the best policy must stay INTERIOR.`);
 // The ratchet. The first run records the baseline; every later run must not
 // make the game worse than the day before. The interior-rule flag is a *goal*
@@ -69,7 +76,7 @@ console.log(`claim: FUN must beat the previous day's, and the best policy must s
 // move it, and a gate would just teach us to special-case the metric.
 const state = { fun: +fun.toFixed(4), decisionValue: +decisionValue.toFixed(4),
                 falseChoice: +falseChoice.toFixed(3), interior,
-                idleSeconds: Math.round(best.maxIdle), bestHold: best.hold };
+                idleSeconds: Math.round(best.maxIdle), idleFactor: +idleFactor.toFixed(3), bestHold: best.hold };
 const basePath = new URL('./fun-baseline.json', import.meta.url);
 const fs = await import('node:fs');
 if (process.argv.includes('--check')) {

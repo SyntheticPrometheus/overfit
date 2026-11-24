@@ -7,7 +7,13 @@ export const LADDER = 2.5;        // every Harvest makes the next rung 2.5x deep
 // ladder you keep climbing rather than a flat +40 every 20 seconds. The bot in
 // sim.mjs measures the climb; the seed haul is sqrt(depth past the rung), so a
 // patient push pays more without letting one harvest explode the economy.
-export function prestigeAt(s) { return PRESTIGE_AT * Math.pow(LADDER, s.harvests); }
+// The rung the next Harvest needs. It climbs with every Harvest, but not for
+// ever: past LADDER_CAP the ladder stops outrunning the tree. Uncapped, the
+// 122nd Harvest needed 10^52 sap while the tree's ceiling is ~10^39 -- a
+// permanent dead end, which the fun instrument measured as 960 s of nothing to
+// do (design/PLAN.md D2) and which is why the late game had no decision left.
+export const LADDER_CAP = 1e9;
+export function prestigeAt(s) { return PRESTIGE_AT * Math.min(Math.pow(LADDER, s.harvests), LADDER_CAP); }
 
 // A node is a spot on the tree. `fx.mul` multiplies sap/s, `fx.flat` adds,
 // `unlock` names a mechanic, `repeat` makes it a buyable (count scaling).
@@ -39,7 +45,10 @@ export const NODES = [
   { id: 'star',    name: 'Starfall',     cost: 1e16,  parents: ['sky'],    x: 73, y: 11, desc: '×1000 sap/s', fx: { mul: 1000 } },
   // The endless edge of the tree: always a next ring, so the late game never
   // runs out of the thing an incremental game is made of — the next purchase.
-  { id: 'ring',    name: 'Ring',         cost: 1e11, growth: 2.2, max: 30, repeat: true, parents: ['sky'], x: 88, y: 4, desc: '×2 sap/s each, max 30', fx: { mul: 2 } },
+  // The endless edge of the tree, scaled to *you*: once the exponential runs
+  // away from the fixed cost ladder, a Ring costs a minute of your income, so
+  // there is always a next purchase and it is always a real spend.
+  { id: 'ring',    name: 'Ring',         cost: 1e11, growth: 2.2, max: 400, repeat: true, parents: ['sky'], x: 88, y: 4, desc: '×2 sap/s each', fx: { mul: 2 } },
 ];
 
 // Permanent upgrades bought with seeds. Survive Harvest. Each is a rung you
@@ -92,7 +101,12 @@ export function owned(s, id) { return (s.counts[id] || 0) > 0; }
 export function has(s, mech) { return !!s.unlocks[mech]; }
 
 export function costOf(s, n) {
-  const c = n.cost * Math.pow(n.growth || 1, s.counts[n.id] || 0);
+  let c = n.cost * Math.pow(n.growth || 1, s.counts[n.id] || 0);
+  // A rate-scaled node never drifts out of reach: it costs `rateScaled` seconds
+  // of what you earn now, whichever is dearer. It is the answer to "the numbers
+  // grew past the cost ladder and there was nothing left to buy".
+  // (a rate-scaled price cannot be saved for here: a Harvest resets sap, so a
+  // node costing 60 s of income is unreachable mid-harvest -- measured, reverted)
   return c * seedDiscount(s);
 }
 
