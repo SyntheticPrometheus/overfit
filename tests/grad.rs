@@ -99,3 +99,38 @@ fn round_flow() {
     assert!((g.house_start - ended).abs() < 1e-9, "the Incumbent must start at your last loss");
     assert_eq!(g.step, 0);
 }
+
+/// Round 1 is the tutorial decision and must stay one: the configuration a
+/// player has before touching anything has to MISS the claim, and either the
+/// slider or the opening FLOPs has to flip it. If this fails the first run
+/// teaches nothing -- the game opened as a screensaver (2026-11-24).
+#[test]
+fn round_one_needs_a_decision() {
+    let play = |lr: f64, buy: Option<usize>| {
+        let mut g = Game::new();
+        g.set_lr(lr);
+        if let Some(id) = buy {
+            assert!(g.buy(id), "the opening FLOPs must buy something");
+        }
+        while g.phase == PHASE_RACE {
+            g.step_once();
+        }
+        let s = g.snapshot();
+        (s[3], s[5])
+    };
+    let (untouched, claim) = play(0.02, None);
+    assert!(
+        untouched >= claim,
+        "doing nothing already beats the opening claim ({untouched:.5} < {claim:.5})"
+    );
+    let mut g = Game::new();
+    assert!(
+        (g.house_loss(DEADLINE) - floor_for(1)).abs() < 1e-9,
+        "round 1 must be raced against the claim, not a half-trained Incumbent"
+    );
+    let (tuned, _) = play(0.03, None);
+    assert!(tuned < claim, "the slider cannot reach the opening claim ({tuned:.5})");
+    let (bought, _) = play(0.02, Some(U_OPT));
+    assert!(bought < claim, "the opening purchase cannot reach the claim ({bought:.5})");
+    assert_eq!(START_FLOPS, 12.0, "the opening stipend is what the shop is priced for");
+}

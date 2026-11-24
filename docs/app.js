@@ -58,6 +58,9 @@ async function boot() {
     return memF64().subarray(p >> 3, (p >> 3) + 26);
   };
   onLr();
+  // The opening state explains itself: what is in hand, and what to do with it.
+  $("msg").textContent = `you start with ${(snap()[6] || 0).toFixed(0)} FLOPs — ` +
+    "spend them in the shop, or tune the slider. beat its claim before the budget runs out.";
   // ?pre=N: run N steps before the first paint. A test hook for screenshots,
   // and the same steps a player's browser would have taken by then.
   const pre = Math.min(420, +new URLSearchParams(location.search).get("pre") || 0);

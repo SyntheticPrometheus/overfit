@@ -8,6 +8,7 @@ fn main() {
     let a: Vec<String> = std::env::args().collect();
     match a.get(1).map(|s| s.as_str()) {
         Some("floors") => floors(),
+        Some("first") => first(),
         Some("ramp") => ramp(),
 
         Some("sens") => sens(),
@@ -146,6 +147,41 @@ fn bot() {
         g.next_round();
     }
     println!("diverged {} total flops earned {:.0}", g.diverged, g.earned_total);
+}
+
+/// Round 1 as the player first meets it: the claim has to be beatable, but not
+/// by doing nothing -- otherwise the opening run teaches nothing. Prints what
+/// the untouched starting model reaches across the slider, then what each
+/// opening purchase buys at a fixed learning rate.
+pub fn first() {
+    println!("lr     loss     claim    verdict");
+    for lr in [0.005f64, 0.01, 0.02, 0.03, 0.04, 0.05, 0.08] {
+        let mut g = Game::new();
+        g.set_lr(lr);
+        while g.phase == PHASE_RACE {
+            g.step_once();
+        }
+        let s = g.snapshot();
+        println!(
+            "{lr:.4} {:8.5} {:8.5}  {}",
+            s[3],
+            s[5],
+            if s[3] < s[5] { "WIN " } else { "LOSS" }
+        );
+    }
+    for lr in [0.02f64, 0.03] {
+        println!("opening purchase at lr {lr:.2} (start {START_FLOPS:.0} FLOPs):");
+        for id in [U_RAM, U_VRAM, U_DATA, U_OPT, U_CORES] {
+            let mut g = Game::new();
+            g.set_lr(lr);
+            let bought = g.buy(id);
+            while g.phase == PHASE_RACE {
+                g.step_once();
+            }
+            let s = g.snapshot();
+            println!("  buy {id} {bought}: loss {:.5} claim {:.5}", s[3], s[5]);
+        }
+    }
 }
 
 /// The purchase plan a plausible player follows, and what it reaches.

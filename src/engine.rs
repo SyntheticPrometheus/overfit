@@ -390,6 +390,10 @@ pub const GAIN: f64 = 12.0;
 pub const BASE_GAIN: f64 = 0.06;
 pub const WIN_PAYOUT: f64 = 16.0;
 pub const LOSS_PAYOUT: f64 = 3.0;
+/// FLOPs in hand on load. Enough that the shop is a live choice before the
+/// first run instead of a wall of disabled buttons: one of batch, width,
+/// dataset, cores or the optimizer, and the first run can tell you which.
+pub const START_FLOPS: f64 = 12.0;
 
 pub const PHASE_RACE: u8 = 0;
 pub const PHASE_WIN: u8 = 1;
@@ -399,7 +403,10 @@ pub const PHASE_LOSS: u8 = 2;
 /// with `cargo run --release --bin sim -- floors` against the capacity the player
 /// can be expected to own, then hand-set to leave a margin for a good learning rate.
 pub const FLOOR: [f64; 16] = [
-    0.0570, 0.0420, 0.0287, 0.0063, 0.0144, 0.0053, 0.0075, 0.0186, 0.0065, 0.0160, 0.0327, 0.0350,
+    // Round 1 is the tutorial decision, not a ladder step: the starting model
+    // (SGD, batch 8, lr 0.02) reaches ~0.046, ~5% over the claim, so the slider
+    // or one opening purchase decides run 1 -- not luck, and not nothing.
+    0.0440, 0.0420, 0.0287, 0.0063, 0.0144, 0.0053, 0.0075, 0.0186, 0.0065, 0.0160, 0.0327, 0.0350,
     0.0584, 0.0369, 0.0500, 0.0512,
 ];
 
@@ -454,9 +461,12 @@ impl Game {
             deadline: DEADLINE,
             loss: 1.0,
             prev_loss: 1.0,
-            house_start: 1.0,
+            // Round 1 is the one round with no previous run to train from, so
+            // the Incumbent arrives with a record instead of a blank slate:
+            // the opening claim is the bar, not a half-trained model.
+            house_start: floor_for(1),
             floor: floor_for(1),
-            compute: 0.0,
+            compute: START_FLOPS,
             earned_total: 0.0,
             levels: [0; U_MAX],
             lr: 0.02,
