@@ -1,0 +1,60 @@
+:root {
+  --bg: #0a0f0b; --bark: #2f2a1e; --dim: #4a5346;
+  --sap: #8ef07a; --sap2: #4fbf6a; --gold: #f0d67a; --ink: #d7e6d0;
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink);
+  font: 15px/1.35 ui-monospace, "DejaVu Sans Mono", Menlo, monospace; overflow: hidden; }
+#app { display: flex; flex-direction: column; height: 100%; max-width: 560px; margin: 0 auto; }
+
+header { display: flex; align-items: baseline; gap: 10px; padding: 10px 12px 6px; border-bottom: 1px solid #1b241b; }
+.stat { display: flex; align-items: baseline; gap: 4px; }
+.stat span { font-size: 22px; font-weight: 700; color: var(--sap); text-shadow: 0 0 12px #4fbf6a55; }
+.stat small { color: var(--dim); font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+.stat.sub span { font-size: 13px; font-weight: 500; color: var(--ink); }
+.stat.sub small { font-size: 10px; }
+#harvest { margin-left: auto; background: linear-gradient(#2a4a2e, #16281a); color: var(--gold);
+  border: 1px solid #557a4a; border-radius: 8px; padding: 6px 10px; font: inherit; font-size: 12px;
+  cursor: pointer; animation: pulse 1.6s ease-in-out infinite; }
+#harvest:disabled { filter: grayscale(1); opacity: .5; animation: none; cursor: default; }
+@keyframes pulse { 50% { box-shadow: 0 0 16px #f0d67a55; } }
+
+main { position: relative; flex: 1; min-height: 0; overflow: hidden; }
+#links { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+#links line { stroke: #24301f; stroke-width: .45; vector-effect: non-scaling-stroke; }
+#links line.live { stroke: #3f6b3a; }
+
+#tree { position: absolute; inset: 0; }
+.node { position: absolute; transform: translate(-50%, -50%); background: #101a11;
+  border: 1px solid #2b3b2b; color: #6f7f6a; border-radius: 50%; width: 54px; height: 54px;
+  display: grid; place-items: center; text-align: center; font: inherit; font-size: 9px; line-height: 1.05;
+  padding: 2px; cursor: default; transition: transform .12s, box-shadow .2s, border-color .2s; }
+.node.locked { opacity: .35; }
+.node.ready { color: var(--ink); border-color: #4f7a44; cursor: pointer; box-shadow: 0 0 10px #4fbf6a22; }
+.node.ready:hover { transform: translate(-50%, -50%) scale(1.08); }
+.node.ready.afford { border-color: var(--sap); color: var(--sap); box-shadow: 0 0 18px #8ef07a55; }
+.node.owned { background: radial-gradient(circle at 40% 35%, #2c4a2c, #13200f); color: var(--sap);
+  border-color: #3f6b3a; }
+.node.owned small { display: block; color: var(--dim); font-size: 8px; }
+.node.bought { animation: pop .35s ease-out; }
+@keyframes pop { 0% { transform: translate(-50%, -50%) scale(1); } 45% { transform: translate(-50%, -50%) scale(1.35); } }
+
+#rain { position: absolute; right: 12px; bottom: 12px; width: 64px; height: 64px; border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #1d3a2a, #0d1a12); border: 1px solid #35604a;
+  color: #9fd8c0; font: inherit; font-size: 11px; cursor: pointer; }
+#rain:active { transform: scale(.94); }
+
+#seedshop { border-top: 1px solid #1b241b; padding: 8px 12px; max-height: 30%;
+  overflow-y: auto; background: #0c120d; }
+#seedshop h2 { margin: 0 0 6px; font-size: 11px; color: var(--gold); text-transform: uppercase; letter-spacing: .1em; }
+#seedshop h2 em { color: var(--dim); font-style: normal; text-transform: none; letter-spacing: 0; }
+.up { display: flex; gap: 8px; align-items: baseline; padding: 5px 0; border-top: 1px solid #131c14; font-size: 12px; }
+.up b { color: var(--gold); min-width: 44px; text-align: right; }
+.up span { flex: 1; color: #a9bda4; }
+.up button { background: #1a2a1a; color: var(--sap); border: 1px solid #3f6b3a; border-radius: 6px;
+  font: inherit; font-size: 11px; padding: 3px 8px; cursor: pointer; }
+.up button:disabled { color: #55604f; border-color: #263024; background: none; cursor: default; }
+.up.done { opacity: .55; }
+.up.done span { text-decoration: line-through; }
+
+footer { padding: 6px 12px 10px; font-size: 11px; color: var(--dim); text-align: center; }

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>GROVE — an incremental tree</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <header>
+    <div class="stat"><span id="sap">0</span><small>sap</small></div>
+    <div class="stat sub"><span id="rate">0</span><small>/s</small></div>
+    <div class="stat sub"><span id="seeds">0</span><small id="seedword">seeds</small></div>
+    <button id="harvest" hidden></button>
+  </header>
+
+  <main>
+    <svg id="links" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+    <div id="tree"></div>
+    <button id="rain" title="Tap for one second of sap">Rain</button>
+  </main>
+
+  <section id="seedshop" hidden>
+    <h2>Seeds <em>kept through every harvest</em></h2>
+    <div id="seedlist"></div>
+  </section>
+
+  <footer id="hint">tap a node to grow it</footer>
+</div>
+<script type="module" src="ui.js"></script>
+</body>
+</html>
