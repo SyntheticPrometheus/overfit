@@ -1,0 +1,7 @@
+{"persona":"optimizer",
+ "a":{"engagement":[3,4,4,4,2,3,2,1,4,3]},
+ "b":{"engagement":[3,4,4,4,5,4,2,4,5,4]},
+ "more_fun":"b",
+ "wanted":"minute 4: show me what a Harvest is actually worth (+seeds, multiplier) next to the 15.6K threshold, so I can decide buy-Crown-now vs harvest-now instead of guessing",
+ "why":"Both opened identically, but A pushed its Harvest threshold to 6.10M and 38.1M while production sat at tens per second and never once displayed a ready Harvest, while B showed HARVEST ready for +2 and +4 seeds with discounted costs marked, so B was the only one where a decision had a computable answer.",
+ "confidence":0.85}

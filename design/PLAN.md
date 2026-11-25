@@ -57,6 +57,16 @@ Instrument: `node design/fun.mjs` (first run records `design/fun-baseline.json`;
    bot) and 2 debators (one argues the change is noise, one argues it is too
    small). They get GOAL/INPUTS/FOLD/ACCEPTANCE/SCOPE/BUDGET and return numbers.
    The panel is the point: one bot finds one strategy and calls it the game.
+
+3b. **When the change is about feel, ask the audience panel as well.**
+   `node design/audience.mjs pack --out design/audience/packN [--flip]` writes two
+   blind transcripts (the build, and a control that Harvests for you); four
+   personas rate them per minute under `design/audience/RUBRIC.md`; then
+   `node design/audience.mjs score design/audience/pack*/panel-*.json --check`.
+   Rules, from the first measured run (`design/audience/RESULT-2026-11-25.md`):
+   the panel is a **diagnostic, not a gate**. It may not veto a change that improves
+   `fun.mjs`/`sim.mjs`, and an INVALID panel is reported as a failed measurement,
+   never cited. What it is for is the `wanted` line and the boring minute.
 4. **Ship one change**, small in code, big in loop. Then re-run the instrument.
    Keep it only if the targeted term moved and no claim regressed — otherwise
    revert and record the negative result (a rejected experiment is a day's work,

@@ -1,0 +1,7 @@
+{"persona":"casual",
+ "a":{"engagement":[2,4,3,4,5,4,3,3,4,3]},
+ "b":{"engagement":[2,4,3,3,2,3,2,1,3,2]},
+ "more_fun":"a",
+ "wanted":"minute 6: I wanted a tap that stops the tree resetting itself, or a plain line saying why my tree shrank back to a Seed",
+ "why":"In A the tree only shrank when I tapped Harvest, so the reset felt like my doing; in B the tree kept shrinking on its own between minutes (7, 8, 10) and I was left staring at a Seed with nothing to tap.",
+ "confidence":0.65}

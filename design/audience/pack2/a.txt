@@ -1,0 +1,64 @@
+GROVE -- what the screen showed you, one block per minute (~10 min).
+Each block is the page at that minute, then what you did before the next one.
+
+Minute 1
+  Sap 0.25 (1/s)  ·  Seeds 0  ·  next Harvest at 10.0K total sap
+  Tree owned: Seed
+  Next in the tree: Roots 6 · Trunk 24
+  Seed shop (kept across runs): Germinate 3 · Thin Bark 8 · Sweet Rot 16 · Rainmaker 30
+Minute 2
+  Sap 74.8 (13.3/s)  ·  Seeds 0  ·  next Harvest at 10.0K total sap
+  Tree owned: Seed, Roots, Trunk, Deep Roots, Lateral Root x4
+  Next in the tree: Lateral Root 230 · Cambium 260 · Thick Trunk 700
+  Seed shop (kept across runs): Germinate 3 · Thin Bark 8 · Sweet Rot 16 · Rainmaker 30
+  You: tapped Rain x36; bought Roots; bought Trunk; bought Deep Roots; bought Lateral Root x4
+Minute 3
+  Sap 1.47K (68.8/s)  ·  Seeds 0  ·  next Harvest at 10.0K total sap
+  Tree owned: Seed, Roots, Trunk, Deep Roots, Cambium, Thick Trunk, Lateral Root x8
+  Next in the tree: Lateral Root 1.33K * · Sapwood 3.20K · Heartwood 12.0K · Crown 30.0K
+  Seed shop (kept across runs): Germinate 3 · Thin Bark 8 · Sweet Rot 16 · Rainmaker 30
+  You: tapped Rain x37; bought Lateral Root x4; bought Cambium; bought Thick Trunk
+Minute 4
+  Sap 42.4K (1.04K/s)  ·  Seeds 0  ·  next Harvest at 15.6K total sap
+  Tree owned: Seed, Roots, Trunk, Deep Roots, Cambium, Thick Trunk, Lateral Root x10, Sapwood, Heartwood, Crown
+  Next in the tree: Bloom 60.0K
+  Seed shop (kept across runs): Germinate 3 · Thin Bark 8 · Sweet Rot 16 · Rainmaker 30
+  You: bought Lateral Root x2; tapped Rain x36; bought Sapwood; bought Heartwood; bought Crown
+Minute 5
+  Sap 115 (62.8/s)  ·  Seeds 4  ·  next Harvest at 62.5K total sap
+  Tree owned: Seed, Roots, Trunk, Deep Roots, Lateral Root x3
+  Next in the tree: Lateral Root 148 · Cambium 260 · Thick Trunk 700
+  Seed shop (kept across runs): Germinate 8 (x1) · Thin Bark 8 · Sweet Rot 16 · Rainmaker 30
+  You: tapped Rain x36; bought Bloom x2; bought Shoot x4; the game Harvested for you x2; spent seeds on Germinate; bought Roots x2; bought Trunk x2; bought Deep Roots x2; bought Lateral Root x13; bought Cambium; bought Thick Trunk; bought Sapwood; bought Heartwood; bought Crown
+Minute 6
+  Sap 27.3K (6.27K/s)  ·  Seeds 6  ·  next Harvest at 156K total sap
+  Tree owned: Seed, Roots, Trunk, Deep Roots, Cambium, Thick Trunk, Lateral Root x10, Sapwood, Heartwood, Crown
+  Next in the tree: Bloom 60.0K
+  Seed shop (kept across runs): Germinate 8 (x1) · Thin Bark 8 · Sweet Rot 16 · Rainmaker 30
+  You: tapped Rain x37; bought Lateral Root x17; bought Cambium x2; bought Thick Trunk x2; bought Sapwood x2; bought Heartwood x2; bought Crown x2; bought Bloom; bought Shoot x4; the game Harvested for you (+2 seeds); bought Roots; bought Trunk; bought Deep Roots
+Minute 7
+  Sap 2.70K (516/s)  ·  Seeds 2  ·  next Harvest at 977K total sap
+  Tree owned: Seed, Roots, Trunk, Deep Roots, Cambium, Thick Trunk, Lateral Root x7
+  Next in the tree: Lateral Root 859 * · Sapwood 3.20K · Heartwood 12.0K · Crown 30.0K
+  Seed shop (kept across runs): Thin Bark 8 · Sweet Rot 16 · Germinate 18 (x2) · Rainmaker 30
+  You: tapped Rain x35; bought Bloom x2; bought Shoot x15; the game Harvested for you x2; bought Roots x2; spent seeds on Germinate; bought Trunk x2; bought Deep Roots x2; bought Lateral Root x17; bought Cambium x2; bought Thick Trunk x2; bought Sapwood; bought Heartwood; bought Crown
+Minute 8
+  Sap 109 (33.8/s)  ·  Seeds 6  ·  next Harvest at 6.10M total sap
+  Tree owned: Seed, Roots, Trunk
+  Next in the tree: Deep Roots 90 * · Cambium 260 · Thick Trunk 700
+  Seed shop (kept across runs): Thin Bark 8 · Sweet Rot 16 · Germinate 18 (x2) · Rainmaker 30
+  You: bought Lateral Root x13; tapped Rain x35; bought Sapwood x2; bought Heartwood x2; bought Crown x2; bought Bloom x2; bought Shoot x20; bought Canopy x2; bought Trellis x2; the game Harvested for you x2; bought Roots x2; bought Trunk x2; bought Deep Roots; bought Cambium; bought Thick Trunk
+Minute 9
+  Sap 59.4K (13.1K/s)  ·  Seeds 1  ·  next Harvest at 15.3M total sap
+  Tree owned: Seed, Roots, Trunk, Deep Roots, Cambium, Thick Trunk, Lateral Root x10, Sapwood, Heartwood, Crown, Bloom, Shoot x3
+  Next in the tree: Shoot 5.74K * · Canopy 340K
+  Seed shop (kept across runs): Sweet Rot 16 · Germinate 18 (x2) · Thin Bark 20 (x1) · Rainmaker 30
+  You: bought Deep Roots x2; tapped Rain x37; bought Lateral Root x20; bought Cambium x2; bought Thick Trunk x2; bought Sapwood x2; bought Heartwood x2; bought Crown x2; bought Bloom x2; bought Shoot x13; bought Canopy; bought Trellis; the game Harvested for you (+3 seeds); bought Roots; spent seeds on Thin Bark; bought Trunk
+Minute 10
+  Sap 78.6K (10.3K/s)  ·  Seeds 4  ·  next Harvest at 38.1M total sap
+  Tree owned: Seed, Roots, Trunk, Deep Roots, Cambium, Thick Trunk, Lateral Root x10, Sapwood, Heartwood, Crown
+  Next in the tree: Bloom 51.0K *
+  Seed shop (kept across runs): Sweet Rot 16 · Germinate 18 (x2) · Thin Bark 20 (x1) · Rainmaker 30
+  You: bought Shoot x7; tapped Rain x35; bought Canopy; bought Trellis; the game Harvested for you (+3 seeds); bought Roots; bought Trunk; bought Deep Roots; bought Lateral Root x10; bought Cambium; bought Thick Trunk; bought Sapwood; bought Heartwood; bought Crown
+
+(end of transcript)

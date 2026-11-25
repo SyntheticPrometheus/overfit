@@ -1,0 +1,55 @@
+GROVE -- what the screen showed you, one block per minute (~10 min).
+Each block is the page at that minute, then what you did before the next one.
+
+Minute 1
+  Sap 0.25 (1/s)  ·  Seeds 0  ·  next Harvest at 10.0K total sap
+  Tree owned: Seed
+  Next in the tree: Roots 6 · Trunk 24
+  Seed shop (kept across runs): Germinate 3 · Thin Bark 8 · Sweet Rot 16 · Rainmaker 30
+Minute 2
+  Sap 74.8 (13.3/s)  ·  Seeds 0  ·  next Harvest at 10.0K total sap
+  Tree owned: Seed, Roots, Trunk, Deep Roots, Lateral Root x4
+  Next in the tree: Lateral Root 230 · Cambium 260 · Thick Trunk 700
+  Seed shop (kept across runs): Germinate 3 · Thin Bark 8 · Sweet Rot 16 · Rainmaker 30
+Minute 3
+  Sap 1.47K (68.8/s)  ·  Seeds 0  ·  next Harvest at 10.0K total sap
+  Tree owned: Seed, Roots, Trunk, Deep Roots, Cambium, Thick Trunk, Lateral Root x8
+  Next in the tree: Lateral Root 1.33K * · Sapwood 3.20K · Heartwood 12.0K · Crown 30.0K
+  Seed shop (kept across runs): Germinate 3 · Thin Bark 8 · Sweet Rot 16 · Rainmaker 30
+Minute 4
+  Sap 42.4K (1.04K/s)  ·  Seeds 0  ·  next Harvest at 15.6K total sap
+  Tree owned: Seed, Roots, Trunk, Deep Roots, Cambium, Thick Trunk, Lateral Root x10, Sapwood, Heartwood, Crown
+  Next in the tree: Bloom 60.0K
+  Seed shop (kept across runs): Germinate 3 · Thin Bark 8 · Sweet Rot 16 · Rainmaker 30
+Minute 5
+  Sap 115 (62.8/s)  ·  Seeds 4  ·  next Harvest at 62.5K total sap
+  Tree owned: Seed, Roots, Trunk, Deep Roots, Lateral Root x3
+  Next in the tree: Lateral Root 148 · Cambium 260 · Thick Trunk 700
+  Seed shop (kept across runs): Germinate 8 (x1) · Thin Bark 8 · Sweet Rot 16 · Rainmaker 30
+Minute 6
+  Sap 27.3K (6.27K/s)  ·  Seeds 6  ·  next Harvest at 156K total sap
+  Tree owned: Seed, Roots, Trunk, Deep Roots, Cambium, Thick Trunk, Lateral Root x10, Sapwood, Heartwood, Crown
+  Next in the tree: Bloom 60.0K
+  Seed shop (kept across runs): Germinate 8 (x1) · Thin Bark 8 · Sweet Rot 16 · Rainmaker 30
+Minute 7
+  Sap 2.70K (516/s)  ·  Seeds 2  ·  next Harvest at 977K total sap
+  Tree owned: Seed, Roots, Trunk, Deep Roots, Cambium, Thick Trunk, Lateral Root x7
+  Next in the tree: Lateral Root 859 * · Sapwood 3.20K · Heartwood 12.0K · Crown 30.0K
+  Seed shop (kept across runs): Thin Bark 8 · Sweet Rot 16 · Germinate 18 (x2) · Rainmaker 30
+Minute 8
+  Sap 109 (33.8/s)  ·  Seeds 6  ·  next Harvest at 6.10M total sap
+  Tree owned: Seed, Roots, Trunk
+  Next in the tree: Deep Roots 90 * · Cambium 260 · Thick Trunk 700
+  Seed shop (kept across runs): Thin Bark 8 · Sweet Rot 16 · Germinate 18 (x2) · Rainmaker 30
+Minute 9
+  Sap 59.4K (13.1K/s)  ·  Seeds 1  ·  next Harvest at 15.3M total sap
+  Tree owned: Seed, Roots, Trunk, Deep Roots, Cambium, Thick Trunk, Lateral Root x10, Sapwood, Heartwood, Crown, Bloom, Shoot x3
+  Next in the tree: Shoot 5.74K * · Canopy 340K
+  Seed shop (kept across runs): Sweet Rot 16 · Germinate 18 (x2) · Thin Bark 20 (x1) · Rainmaker 30
+Minute 10
+  Sap 78.6K (10.3K/s)  ·  Seeds 4  ·  next Harvest at 38.1M total sap
+  Tree owned: Seed, Roots, Trunk, Deep Roots, Cambium, Thick Trunk, Lateral Root x10, Sapwood, Heartwood, Crown
+  Next in the tree: Bloom 51.0K *
+  Seed shop (kept across runs): Sweet Rot 16 · Germinate 18 (x2) · Thin Bark 20 (x1) · Rainmaker 30
+
+(end of transcript)
