@@ -42,6 +42,10 @@ export const NODES = [
 
   { id: 'bloom',   name: 'Bloom',      cost: 60000,  parents: ['sapwood','heart'], x: 50, y: 38, desc: 'Unlocks Harvest — trade the tree for seeds', fx: { unlock: 'harvest' } },
   { id: 'shoot',   name: 'Shoot',      cost: 2000, growth: 1.5, max: 10, repeat: true, parents: ['bloom'], x: 25, y: 38, desc: '×1.15 sap/s each, max 10', fx: { mul: 1.15 } },
+  // The gap between Shoot (2K) and Canopy (400K) is 200x of pure waiting: the
+  // instrument counted 40-85 s spells with nothing to buy there. A repeatable
+  // rung in the gap turns the wait into purchases (design/PLAN.md D2).
+  { id: 'resin',   name: 'Resin',      cost: 40000,  growth: 1.55, max: 8, repeat: true, parents: ['bloom'], x: 12, y: 38, desc: '×1.2 sap/s each, max 8', fx: { mul: 1.2 } },
   { id: 'canopy',  name: 'Canopy',     cost: 400000, parents: ['bloom'], x: 75, y: 38, desc: '×5 sap/s', fx: { mul: 5 } },
 
   { id: 'trellis', name: 'Trellis',    cost: 250000, parents: ['canopy'], x: 88, y: 25, desc: 'Buys every node you can afford, by itself', fx: { unlock: 'auto' } },

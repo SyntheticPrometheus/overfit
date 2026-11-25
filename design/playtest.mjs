@@ -11,7 +11,7 @@ import { newGame, NODES, available, costOf, buy, buySeedUpgrade, tick, tap,
          rate, fmt, rung } from '../docs/grove/game.js';
 
 const MINUTES = Number(process.env.MINUTES || 10);
-const HOLD = Number(process.env.HOLD || 15);   // the instrument-ranked policy
+const HOLD = Number(process.env.HOLD || 12);   // the instrument-ranked policy
 const DT = 0.25;
 
 // human cadence: look, then act -- lognormal around 1.5 s, never a fixed tick
