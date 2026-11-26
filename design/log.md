@@ -137,3 +137,41 @@ restart while the harvest rung is `15 s x rate`, so every extra seed rung makes
 later rounds shorter. Fix that (D3) and the opening's 64 s becomes cheap.
 Filed as a task rather than tuned away in a hurry — a weakened claim is worse
 than a quiet day.
+
+## 2026-11-26 (second pass) — the idle term and the pacing claim are opposed
+
+Ran the loop on the tree 8118f1e left: FUN 0.5971, decision_value 196.3%,
+false_choice 6%, idle 64 s, best hold 12, INTERIOR, 40 harvests; `sim.mjs --check`
+7/7, `playtest.mjs` unchanged. Worst term is still idle (64 s).
+
+Target, from yesterday's own filing: D3 — the rung is `15 x rate *now*`, and the
+rate compounds *inside* a round, so every round is ~4 doublings (14–15 s)
+regardless of depth: the 2.5x hand ladder is decoration (at harvest 40 the next
+rung is 7.2e22 against a hand ladder of 1e13). The claim wants later rounds to
+cost more; the rule makes them cost the same and slowly less. Six variants,
+each measured with `fun.mjs` and `sim.mjs --check` in full:
+
+| variant | FUN | dv | false_choice | idle | harvests | sim |
+|---|---|---|---|---|---|---|
+| baseline 8118f1e | 0.5971 | 196.3% | 6% | 64 s | 40 | 7/7 |
+| round floor: 15 s wall-clock before Harvest | 0.076 | 32% | — | 221 s | 7 | later-rounds FAIL |
+| rung frozen at the round's start rate | **0.014** | 5.2% | 44% | 93 s | 4036 (SPAM) | later-rounds FAIL |
+| rung x 1.15^harvests (start-rate base) | 0.015 | 8.6% | 38% | 225 s | 1378 (SPAM) | later-rounds FAIL |
+| rung x 1.3^harvests (start-rate base) | 0.019 | 14.8% | 31% | 356 s | 814 (SPAM) | later-rounds FAIL |
+| rung x 1.3^harvests (live-rate base) | 0.028 | 26.3% | 25% | 475 s | 9 | 7/7 |
+| rung x 1.6^harvests (live-rate base) | 0.032 | 42.9% | 6% | **850 s** | 5 | 7/7 |
+
+Rounds now climb as the claim asks (52, 87, 129, 166, 211, 266 s) and FUN
+collapses to 0.032 on **idle 850 s**. The finding is structural, not a tuning
+miss: `idle` is measured while Harvest income is *withheld*, so anything that
+lengthens a round buys dead air, and anything that shortens it trips
+"later rounds are not trivial". The two gates now point in opposite directions
+under the current economy, which is why ten variants failed yesterday for a
+different reason than these six fail today.
+
+**Shipped no gameplay change.** Tree is back at 8118f1e exactly (`git checkout`),
+`fun.mjs --check` PASS at 0.5971 and `sim.mjs --check` 7/7. The next change must
+move pacing and content in one commit: a depth-scaled rung (1.6^harvests passes
+7/7) *plus* the gap content that absorbs the 850 s it opens — otherwise either
+gate alone blocks the other. Filed as the remaining slice instead of tuning in a
+hurry.
