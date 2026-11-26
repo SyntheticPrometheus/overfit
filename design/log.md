@@ -85,3 +85,55 @@ one claim flipped each way: "Rain taps are the early game" now PASSES, "the
 
 Audience panel not run: the instrument's three terms moved and the change is
 the boring minute the panel named; a 4-persona run is a separate spend.
+
+## 2026-11-26 — the opening's 63 s is one purchase and a wait
+
+Ran the instruments on the tree 02acc82 left: FUN 0.5971, decision_value 196.3%,
+false_choice 6%, idle 64 s, best hold 12, INTERIOR, 40 Harvests in 1200 s. All
+`sim.mjs` claims 7/7. (The row's note quoted the pre-02acc82 baseline 0.3661 —
+stale, not a regression.)
+
+Where the 64 s lives, measured (`/tmp/probe6.mjs`, same policy as fun.mjs, every
+stretch > 20 s printed with the shop at its start): the longest stretch is the
+opening — t=0..64 s — and it contains exactly ONE purchase. At t=3 s the shop
+offers Trunk 24 against a rate of 1.6 sap/s, so the first minute is 6 sap bought,
+then 58 s of tapping. Nothing sits between Roots 6 and Trunk 24. (The later 22–45 s
+stretches are the same shape: a greedy buyer drains to 0 for the next rung.)
+
+Hypothesis (written before the change): the dead air is *content at the base*,
+not pacing. One cheap repeatable between Roots and Trunk (Moss: 4 sap, growth
+1.5, max 6, ×1.1 sap/s each) must drop idle below 64 s and raise FUN above
+0.5971, while `sim.mjs` stays 7/7, the best policy stays INTERIOR and Harvests
+stay at or under 60.
+
+Tried ten variants of that one node (each measured, each reverted — `fun.mjs` and
+`sim.mjs --check` run in full for every row). The shape of the failure was the
+same every time: FUN and idle move a lot, and `sim.mjs`'s anti-inflation claim
+breaks, because front-loading sap or seeds buys seed rungs earlier, and the seed
+multipliers compound the restart, so late rounds shrink.
+
+| Moss | FUN | idle | dv | false_choice | sim |
+|---|---|---|---|---|---|
+| ×1.1 max 6 g1.5 | 0.678 | 36 s | 174% | 6% | later-rounds FAIL |
+| ×1.05 max 5 g1.6 | 0.718 | 34 s | 210% | 13% | later-rounds FAIL |
+| ×1.08 max 5 g1.6 | 0.729 | 33 s | 190% | 6% | later-rounds FAIL |
+| ×1.1 max 4 g1.6 | 0.654 | 48 s | 190% | 6% | **7/7 PASS, dv gate FAIL** |
+| ×1.02 max 8 g1.35 | 0.735 | 45 s | 225% | 6% | later-rounds FAIL |
+| ×1.02 max 12 g1.3 | 0.562 | 64 s | 200% | 13% | later-rounds FAIL |
+| ×1.03 max 12 g1.4 | 0.760 | 34 s | 206% | 6% | later-rounds FAIL |
+| +0.5 flat max 8 | **0.908** | **18 s** | 218% | 6% | later-rounds FAIL |
+| +1 flat max 6 | 0.839 | 14 s | 202% | 13% | later-rounds FAIL |
+| Bark Ring 1e9 late | 0.678 | 25 s | 152% | 6% | later-rounds FAIL |
+
+The late-game variant is the tell: a *late* node with no opening effect also
+trips "later rounds are not trivial". The claim compares two numbers that are
+both 25-65 s long, so it is near-unstable under any content addition, and the
+baseline 7/7 is closer to a coincidence than a plateau.
+
+**Shipped nothing.** The tree is back at 02acc82 exactly (`git checkout`), 7/7
+and `fun.mjs --check` PASS at 0.5971. The instrument is not the reason to stop
+shipping content: the real blocker is that the seed multipliers compound the
+restart while the harvest rung is `15 s x rate`, so every extra seed rung makes
+later rounds shorter. Fix that (D3) and the opening's 64 s becomes cheap.
+Filed as a task rather than tuned away in a hurry — a weakened claim is worse
+than a quiet day.
