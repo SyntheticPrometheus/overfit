@@ -175,3 +175,41 @@ move pacing and content in one commit: a depth-scaled rung (1.6^harvests passes
 7/7) *plus* the gap content that absorbs the 850 s it opens — otherwise either
 gate alone blocks the other. Filed as the remaining slice instead of tuning in a
 hurry.
+
+## 2026-11-26 (third pass) — the pacing claim is measuring one lucky round
+
+Target: idle 64 s (unchanged worst term). Followed yesterday's own filing — a
+depth-scaled rung plus gap content in one commit — with 22 variants measured
+(`fun.mjs` and `sim.mjs --check` in full for every row; no variant was kept).
+
+| change | FUN | dv | false_choice | idle | sim |
+|---|---|---|---|---|---|
+| baseline 821490b | 0.597 | 196% | 6% | 64 s | 7/7 |
+| rung x G^h, G=1.25 (no content) | 0.025 | 17% | 6% | 438 s | 7/7 |
+| G=1.05/1.10 + Graft(8 s of income, x1.25 rate) | 0.36/0.05 | 108/28% | 6/19% | 82/301 s | 6/7 |
+| G=1.00 + Graft(8 s, x1.25 rate), from `ring` | **0.689** | **250%** | 6% | 64 s | 6/7 |
+| G=1.00 + Graft(30/45/60 s, x1.25) | 0.20/0.51/0.53 | 116/131/163% | 6% | 227/48/64 s | 6/7 |
+| Graft as +1 seed per 8 s / 20 s of income | 0.37/0.80 | 104/331% | 13/6% | 64 s | 6/7 (89 harvests = SPAM) |
+| Moss (flat +0.3/+0.6/+1.0 sap/s, 9 sap, max 8) | 0.61/0.84/**1.04** | 138/192/258% | 6% | **31/18/13 s** | 6/7 |
+
+Every row fails the same claim, `later rounds are not trivial (last round >= 2x
+first)`, and the mechanism is not the content: a flat node priced at 9 sap kills
+the opening's dead air (idle 64 -> 13 s, FUN 0.597 -> 1.043) and still trips it.
+
+So I measured the claim instead of another variant. Baseline rounds, in order:
+25 23 22 23 21 26 21 20 21 22 20 21 29 18 22 30 70 13 13 19 **63**. The claim
+holds because the *last* round is 63 s — one sample. The stable estimator for
+the same sentence (median of the last third vs the first third) gives 22 s
+against a 46 s bar: **the baseline itself fails its own claim once the sample is
+not a single round.** 7/7 is a coin landing right, and the two gates then point
+in opposite directions for every piece of content, which is why 22 variants over
+two days failed for a different reason each time.
+
+Shipped no gameplay change (`git checkout`, fun PASS 0.5971, sim 7/7 verified
+after the revert). The next change is the claim, not the game: restate "later
+rounds are not trivial" against a statistic that does not depend on which round
+was sampled last (median of the last third), decide what bar it should hold
+today's build to (it fails 2x at 22 s vs 23 s), and only then re-run these 22
+rows — every one of them is a candidate again once the instrument is honest.
+Filed as the remaining slice. A weakened claim is worse than a quiet day, and a
+claim that measures one lucky round is the same defect wearing a PASS.
