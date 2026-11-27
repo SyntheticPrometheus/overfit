@@ -213,3 +213,53 @@ today's build to (it fails 2x at 22 s vs 23 s), and only then re-run these 22
 rows — every one of them is a candidate again once the instrument is honest.
 Filed as the remaining slice. A weakened claim is worse than a quiet day, and a
 claim that measures one lucky round is the same defect wearing a PASS.
+
+## 2026-11-27 — the audience panel still points the right way, but the gap halved
+
+Ran the 4-persona blind panel (casual, veteran, gardener, optimizer) against the
+current build `cd6795a`, pack `design/audience/pack-latest` (live=A). Selftest
+passed first; raters saw only the two transcripts and `RUBRIC.md`.
+
+| rater | live mean | dead mean | pref |
+|---|---|---|---|
+| casual | 3.50 | 2.70 | live |
+| veteran | 3.40 | 2.60 | live |
+| gardener | 3.10 | 2.70 | live |
+| optimizer | 2.60 | 2.00 | live |
+
+`preference for live: 4/4, agreement 100%, gap +0.65, ENT 0.162` →
+`score --check` exits 1: **gap 0.65 < the pre-registered 0.75**. The panel reads
+the build as the choice-bearing one every time, but the per-minute separation is
+no longer large enough to be a measurement. Reported as a failed measurement, not
+cited as a design reason (the panel may not veto `fun.mjs`).
+
+The interesting number is against 2026-11-25: live fell 3.75 → 3.15 while the
+choice-poor control barely moved (2.63 → 2.50). The live build lost 0.60 of
+engagement; the instrument is not the only thing that moved. Either the last
+shipped rung (`02acc82`) reads as *less* of a choice than the build the panel
+rated on the 25th, or the raters this time were harsher on the same minutes —
+neither is answerable from one pack, and the honest next step is the same pack
+re-rated rather than another build change.
+
+`wanted` lines, in the raters' words (each names a minute):
+
+- optimizer, minute 2: "sap/s or multiplier values on every tree and seed-shop
+  upgrade so I can compute ROI instead of guessing from cost alone" — the same
+  defect the 25th found (screen never shows what a purchase is worth). Third
+  run, still unfixed, still not something `fun.mjs` can ask for.
+- casual, minute 9: "a quick rebuy button after Harvest so I do not have to tap
+  through the same early tree list every minute" — new; the rebuild cost is UI,
+  not pacing.
+- veteran, minute 7: "a higher-tier unlock past Trellis … and a reason to hold a
+  Harvest instead of resetting" — new; content stops at the tier the panel can
+  see, so late minutes have nothing to aim at.
+- gardener, minute 5: "a visual of the tree taking shape and a way to keep
+  tending it instead of wiping it on Harvest" — the screen shows numbers, not a
+  garden; `hold 5` still wipes the owned list every ~40 s.
+
+Minute 8 was rated dead air in the live build (one rater scored it below the
+control's same minute). Concrete and addressable; not yet a pattern.
+
+Nothing shipped in `design/`. Open: the ROI-on-the-screen defect (third sighting),
+the post-Harvest rebuy, and a late-game tier. The panel instrument itself needs
+the same pack re-rated before its 0.75 bar can be trusted again.

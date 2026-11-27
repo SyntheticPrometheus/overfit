@@ -1,0 +1,35 @@
+{
+  "persona": "VETERAN",
+  "a": {
+    "engagement": [
+      3,
+      3,
+      4,
+      4,
+      4,
+      4,
+      3,
+      3,
+      3,
+      3
+    ]
+  },
+  "b": {
+    "engagement": [
+      3,
+      3,
+      4,
+      4,
+      2,
+      2,
+      2,
+      3,
+      2,
+      1
+    ]
+  },
+  "more_fun": "a",
+  "wanted": "minute 7: a higher-tier unlock past Trellis (like Fruit or Second Ring) and a reason to hold a Harvest instead of resetting every minute",
+  "why": "A let me time my Harvests to push for +5 seeds and steady rebuilds, whereas B's forced auto-harvests stripped prestige agency and escalated the Harvest threshold to 95.4M against 11.0/s income by minute 10.",
+  "confidence": 0.85
+}
