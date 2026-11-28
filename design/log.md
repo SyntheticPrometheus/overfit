@@ -331,3 +331,29 @@ Dispatch: 6-minute pack (seed 12345, live=A) at `design/audience/human-1`, sent
 to the owner's phone as three texts (transcripts A and B, then the rubric), 3343 /
 2773 / 638 B, single parts. His answer is the measurement; until it exists this
 section claims only that the harness folds a person correctly.
+
+## 2026-11-28 (2) — what is left is the idle term, and it is not this sitting's change
+
+`node design/fun.mjs --check` on today's tree: FUN **0.7033**, decision_value
+**234.9%**, false_choice 6% (1 of 16), idle **55 s**, best hold 12 INTERIOR,
+36 Harvests / 1200 s. Decomposed, the terms cost: log(1+2.349) = 1.221,
+× (1−0.06) = 1.148, × 1/(1+55/90) = **0.715**. The idle term is 38% of the
+score — it is the worst term, and it is forty times the cost of false_choice.
+
+Where the 55 s sits (instrumented copy of `fun.mjs`, hold 12, 1200 s): the
+stretch is one continuous spell whose whole length is spent with the cheapest
+*available* purchase ~10× current income (e.g. shoot 51 258 at 4 582 sap/s,
+resin 96 100 behind it, canopy 400 000 next), and `sim.mjs`'s greedy policy
+reports the same shape ("longest idle 60.3 s total, 17.0 s in the first
+5min"), so it is not an opening artefact: it is the Shoot/Resin → Canopy
+price gap, the same class D2 attacked once by adding Resin.
+
+Hypothesis (not shipped): a repeatable rung priced at ~5 s of current income
+in that window (repeat, growth 1.55, max ≥ 12) cuts idle from 55 s to < 25 s
+while holding decision_value ≥ 235% and false_choice ≤ 6%.
+
+Not shipped today: measuring one candidate costs a 136 s sweep and a margin
+this thin needs 2–3 variants (the 11-27 table shows neighbours at 0.571 and
+0.609 for a single step of the same knob). `docs/grove/` is unchanged today.
+Remainder filed as a task: measure the gap rung, keep it only if idle < 25 s
+with no regression, then ship + push + text.
