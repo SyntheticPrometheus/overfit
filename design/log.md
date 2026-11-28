@@ -357,3 +357,34 @@ this thin needs 2–3 variants (the 11-27 table shows neighbours at 0.571 and
 0.609 for a single step of the same knob). `docs/grove/` is unchanged today.
 Remainder filed as a task: measure the gap rung, keep it only if idle < 25 s
 with no regression, then ship + push + text.
+
+## 2026-11-28 (3) — the gap rung is falsified: the idle term is the opening, not the gap
+
+Hypothesis from (2): a repeatable rung behind Bloom priced at ~5 s of income cuts
+idle 55 s -> < 25 s with decision_value >= 235% and false_choice <= 6%.
+Five variants measured in throw-away trees (copy of `docs/grove/`, best of 16
+holds in 1200 s, same instrument):
+
+| variant (parents bloom)                | best hold | harvests | dv      | fc  | idle | FUN   |
+|----------------------------------------|-----------|----------|---------|-----|------|-------|
+| control                                | 12        | 36       | 234.9%  | 6%  | 55 s | 0.703 |
+| Bud 22k g1.55 max12 x1.2               | 5         | 64 SPAM  | 234.4%  | 13% | 48 s | 0.688 |
+| Bud 22k g1.55 max20 x1.15              | 4         | 75 SPAM  | 214.6%  | 6%  | 48 s | 0.699 |
+| Bud 26k g1.5  max16 x1.2               | 4         | 68 SPAM  | 185.4%  | 6%  | 48 s | 0.640 |
+| Sprout 8k g1.35 max40 x1.08            | 4         | 61 SPAM  | 156.3%  | 19% | 48 s | 0.498 |
+| Sprout 12k g1.4 max30 x1.1             | 4         | 68 SPAM  | 185.4%  | 6%  | 48 s | 0.640 |
+
+None reaches idle < 25 s, every one lowers decision_value, and four of five push
+the best policy over the >60-harvest spam gate. The reason is visible in the
+hold-12 row: first Harvest is 55 s in the control and 54 s with the rung, and
+`fun.mjs` measures the *best policy's* longest dead-air spell — which is that
+opening ramp, before Bloom exists. A node gated behind Bloom cannot shorten it;
+its only effect is a cheaper best policy (hold 12 -> 4), which lowers the opening
+by the same ~7 s and multiplies the late game into spam. The 55 s is not the
+Shoot/Resin -> Canopy gap after all, and D2's diagnosis was wrong at the top.
+
+Not shipped: `docs/grove/` unchanged. The next target is the opening itself
+(0 -> first Harvest), and the open question is whether a 48-55 s first rung is
+deliberate teaching (D5) or dead air the instrument should score. That question
+is a metric-definition change, so it needs its own hypothesis and baseline, not
+a quiet edit to `fun.mjs`. Remainder filed as a task.
