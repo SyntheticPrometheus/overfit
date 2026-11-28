@@ -2,7 +2,7 @@
 
 Follow `design/PLAN.md` §"The daily loop", in order, and stop at the budget:
 
-1. `cd ~/Projects/overfit && node design/fun.mjs --check && node docs/grove/sim.mjs --check`
+1. `cd ~/Projects/overfit && node design/fun.mjs --check && node docs/grove/sim.mjs --check && HOLD=15 node design/playtest.mjs --check`
 2. Pick the worst term; write the hypothesis + the number it must move here in
    `design/log.md` (append a dated entry; one entry per day, newest last).
 3. Research the failure class (cheap sources first: the repo's own measurements,

@@ -21,7 +21,7 @@ const lookGap = () => Math.min(4, Math.max(0.4, Math.exp(Math.log(1.5) + 0.35 * 
 
 const s = newGame();
 let t = 0, nextLook = 0, harvests = 0, decisions = 0, pops = 0, rows = [];
-let lastRate = 0, lastHarvest = null;
+let lastRate = 0, lastHarvest = null, firstHarvest = null;
 while (t < MINUTES * 60) {
   tick(s, DT);
   t += DT;
@@ -39,7 +39,10 @@ while (t < MINUTES * 60) {
     if (!o.length || !buy(s, o[0].id)) break;
     pops++;
   }
-  if (canHarvest(s) && seedGain(s) >= HOLD) { const g = harvest(s); if (g) { harvests++; lastHarvest = t; } }
+  if (canHarvest(s) && seedGain(s) >= HOLD) {
+    const g = harvest(s);
+    if (g) { harvests++; lastHarvest = t; if (firstHarvest === null) firstHarvest = t; }
+  }
 
   if (Math.floor(t / 60) > rows.length) {
     rows.push({ min: rows.length + 1, rate: rate(s), sap: s.sap, seeds: s.seeds,
@@ -58,5 +61,20 @@ const idleMin = [];
 for (let i = 1; i < rows.length; i++) if (rows[i].pops === rows[i - 1].pops) idleMin.push(rows[i].min);
 console.log(`\nchose between 2+ affordable things ${rows.at(-1).decisions} times in ${MINUTES} min (${(rows.at(-1).decisions / MINUTES).toFixed(1)}/min)`);
 console.log(`minutes with no purchase at all: ${idleMin.length ? idleMin.join(', ') : 'none'}`);
-console.log(`harvests: ${harvests}; seeds at the end: ${s.seeds}; seed rungs: ` +
+console.log(`harvests: ${harvests}; first at ${firstHarvest === null ? 'never' : firstHarvest.toFixed(0) + 's'}; seeds at the end: ${s.seeds}; seed rungs: ` +
   SEED_UPGRADES.map(u => `${u.id}×${rung(s, u.id)}`).join(' '));
+
+// Guard for the D5 class (2026-11-24): a patient policy whose first Harvest is
+// minutes away has no choices to make in the opening, however good its 20-min
+// haul. Run with HOLD=15 to pin the patient case.
+if (process.argv.includes('--check')) {
+  const perMin = rows.at(-1).decisions / MINUTES;
+  const claims = [
+    ['a patient hold gets its first Harvest under 4.5 min', firstHarvest !== null && firstHarvest < 270],
+    ['a patient hold gets at least one Harvest in 10 min', harvests >= 1],
+    ['a patient hold sees a real choice at least 0.5/min', perMin >= 0.5],
+  ];
+  let bad = 0;
+  for (const [name, ok] of claims) { console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}`); if (!ok) bad++; }
+  if (bad) process.exit(1);
+}

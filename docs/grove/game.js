@@ -17,10 +17,18 @@ export const LADDER = 2.5;        // every Harvest makes the next rung 2.5x deep
 // rung to the player's own income makes every Harvest a ~15 s push at *any*
 // depth: a decision that repeats, not a rule that runs out.
 export const LADDER_CAP = 1e9;
-export const RUNG_SECONDS = 15;
+// The measured-best policy on 2026-11-27 was hold 12; at a 15 s rung the first
+// Harvest still sat ~3.5 min into a cheapest-first human opening because every
+// purchase raised the rung while the player was holding for it. 18 s keeps the
+// later cycles a real push while the first rung is the fixed milestone below.
+export const RUNG_SECONDS = 18;
 export function prestigeAt(s) {
   const byHand = PRESTIGE_AT * Math.min(Math.pow(LADDER, s.harvests), LADDER_CAP);
-  return Math.max(byHand, RUNG_SECONDS * rate(s));
+  // The rate floor starts *after* the first Harvest. Before it, the rung is the
+  // fixed 10K milestone: a player's own first-minute purchases must not move the
+  // goalpost while they are still learning what a Harvest is (D5, 2026-11-24).
+  const floor = s.harvests >= 1 ? RUNG_SECONDS * rate(s) : 0;
+  return Math.max(byHand, floor);
 }
 
 // A node is a spot on the tree. `fx.mul` multiplies sap/s, `fx.flat` adds,

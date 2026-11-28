@@ -263,3 +263,47 @@ control's same minute). Concrete and addressable; not yet a pattern.
 Nothing shipped in `design/`. Open: the ROI-on-the-screen defect (third sighting),
 the post-Harvest rebuy, and a late-game tier. The panel instrument itself needs
 the same pack re-rated before its 0.75 bar can be trusted again.
+
+## 2026-11-27 — D5: the first Harvest is a milestone, not a moving goalpost
+
+Target (filed 2026-11-24): the *optimal* early policy was un-fun — at hold 15
+the first Harvest was ~7 min away and the first 10 min held 0.1 choices/min,
+while hold 5 gave 1.6/min. Re-measured on main first, with `playtest.mjs`'s
+cheapest-first human cadence: at hold 15 the first Harvest **never** arrived in
+10 min (0 Harvests, 0.0 choices/min, 3 dead minutes). The filed 7-min figure was
+the *most-expensive-first* bot (`fun.mjs`, 136 s); a human who buys the cheap
+node in front of them keeps raising `prestigeAt` while holding, so the rung runs
+away from the haul they are saving for. That is the mechanism, not pacing.
+
+Hypothesis: the rate-scaled floor belongs to the loop *after* the first Harvest.
+Before it, the rung is the fixed 10K milestone, so first-minute purchases cannot
+move the goalpost. A slightly longer post-first rung (15 -> 18 s) keeps the later
+cycle a real push and stops the now-earlier first Harvest from collapsing the
+policy spread.
+
+Tried and measured (`node design/fun.mjs`, 1200 s, before each row was reverted):
+
+| variant | FUN | decision_value | playtest hold 15, 10 min |
+|---|---|---|---|
+| main (floor 15 s from t=0) | 0.597 | 196% | 0 Harvests, 0.0 choices/min |
+| haul exponent 0.6 / 0.7 | 0.42 / 0.15 | 115 / 35% | — (policies collapse) |
+| fixed first rung only | 0.585 | 173% | 1 Harvest, 1.0/min |
+| first floor 8 s | 0.597 | 196% | 1 Harvest, 0.5/min |
+| **fixed first rung + rung 17 s** | **0.671** | **217%** | — |
+| **fixed first rung + rung 18 s** | **0.703** | **235%** | **2 Harvests, 0.7/min** |
+| fixed first rung + rung 16 / 20 s | 0.571 / 0.609 | 167 / 202% | — |
+
+Shipped: `prestigeAt`'s rate floor is gated on `s.harvests >= 1`,
+`RUNG_SECONDS` 15 -> 18. Measured after (`node design/fun.mjs --check`):
+FUN 0.5971 -> **0.7033**, decision_value 196.3 -> **234.9%**, false_choice 6%,
+idle 64 -> **55 s**, best hold 12 INTERIOR, 36 Harvests in 20 min (cap 60).
+`sim.mjs --check` **7/7 PASS**. `playtest.mjs` hold 12: 0.4 -> **1.1
+choices/min**; hold 15: **241 s** to the first Harvest, 2 Harvests, 0.7/min;
+hold 5: 2.9/min. The optimum is still greedier than the patient policy, but the
+patient opening now has a Harvest and choices before the 5-minute mark.
+
+Guard: `design/playtest.mjs --check` (HOLD=15) now pins first Harvest < 270 s,
+>= 1 Harvest and >= 0.5 choices/min in 10 min, and `design/DAILY.md` /
+`PLAN.md` run it beside `fun` and `sim`. The class — a rung that chases the
+player's own purchases before they have ever harvested — is what the floor gate
+makes impossible.

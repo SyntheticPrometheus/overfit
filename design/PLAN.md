@@ -45,7 +45,8 @@ Instrument: `node design/fun.mjs` (first run records `design/fun-baseline.json`;
 
 ## The daily loop (07:00, one page, one push)
 
-1. **Read the instrument.** `fun.mjs --check` and `sim.mjs --check`. The worst
+1. **Read the instrument.** `fun.mjs --check`, `sim.mjs --check` and
+   `HOLD=15 node design/playtest.mjs --check`. The worst
    term is today's target; write the hypothesis and the number it must move.
 2. **Recursive research** (≤20 min, cheap): the failure class, not the game.
    Lateral prompts: *what would a card-game designer call this?*, *which
