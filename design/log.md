@@ -307,3 +307,27 @@ Guard: `design/playtest.mjs --check` (HOLD=15) now pins first Harvest < 270 s,
 `PLAN.md` run it beside `fun` and `sim`. The class — a rung that chases the
 player's own purchases before they have ever harvested — is what the floor gate
 makes impossible.
+
+## 2026-11-28 — the panel gets the one rater it cannot simulate (task #487)
+
+The 11-25 result is cited as "the panel separates the build from the choice-poor
+control, 4/4 in both presentation modes". Its falsifier, written into the digest
+and never run: *if a human rates the control above the build, the panel is
+measuring text salience and must not be cited.* No human had ever read the pair.
+
+Change: `node design/audience.mjs human` — builds a blind pack (a.txt / b.txt /
+key.json), prints only what the screen showed, reads a rater either as JSON or as
+the phone shape (`A 3 4 3 2 3 2` / `B 2 2 3 2 2 1` / `better: a` / `wanted: ...`),
+saves `rater-<name>.json` beside the key, scores it with the same gate, and exits
+1 when the person prefers the control. The person never sees the key, and the
+answer folds into the same table as the four AI raters instead of sitting beside
+it as an opinion.
+
+Pinned in `selftest`: a person who prefers the build exits 0, one who prefers the
+control exits 1, both leave a rater file. `pack1+2` and `pack3+4` still exit 0
+(gap +1.13 / +0.95), so the instrument was not changed under the result.
+
+Dispatch: 6-minute pack (seed 12345, live=A) at `design/audience/human-1`, sent
+to the owner's phone as three texts (transcripts A and B, then the rubric), 3343 /
+2773 / 638 B, single parts. His answer is the measurement; until it exists this
+section claims only that the harness folds a person correctly.

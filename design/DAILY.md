@@ -11,7 +11,10 @@ Follow `design/PLAN.md` §"The daily loop", in order, and stop at the budget:
    numbers. Fold with `pi-delegate verdict`.
 4b. A change about feel also runs the audience panel (`design/audience/RUBRIC.md`,
    `node design/audience.mjs pack|score`). It is a diagnostic: report its gap and
-   its `wanted` line, never let it veto a measured improvement.
+   its `wanted` line, never let it veto a measured improvement. The panel's raters
+   are AI; `node design/audience.mjs human` is the one person who is not, and
+   a person who prefers the choice-poor control voids the panel's citation
+   (`design/audience/RESULT-2026-11-25.md`, task #487).
 5. Ship ONE change to `docs/grove/` (or `src/` for OVERFIT), re-run both checks,
    keep it only if the targeted term moved and no claim regressed.
 6. Commit, push to `SyntheticPrometheus/overfit` (main), verify the live file hash
